@@ -1,0 +1,4 @@
+
+This Data Quality Notebook fetches data quality rules metadata and applies the specified data quality rules (e.g., filter) to the transformed DataFrames. The `apply_data_quality_rule` function checks if the records in the input DataFrame meet the specified conditions and separates valid and invalid records. The resulting valid and invalid records are stored in the `valid_records_dict` and `invalid_records_dict` dictionaries, respectively.
+
+You can extend this example to support additional data quality rule types and customizations as needed. Once you have the valid and invalid records, you can decide how to handle them in your pipeline, such as storing invalid records separately for further investigation or cleaning.
