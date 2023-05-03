@@ -42,3 +42,4 @@ resource "azurerm_sql_server_auditing" "example" {
   storage_endpoint = var.storage_endpoint
   retention_days = var.retention_days
   server_id = azurerm_sql_server.example.id
+}
