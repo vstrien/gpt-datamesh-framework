@@ -1,0 +1,43 @@
+{
+    "name": "DataMeshOrchestration",
+    "properties": {
+        "activities": [
+            {
+                "name": "RunDataIngestionNotebook",
+                "type": "DatabricksNotebookActivity",
+                "linkedServiceName": {
+                    "referenceName": "DatabricksWorkspace",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "notebookPath": "/path/to/your/ingestion-notebook",
+                    "baseParameters": {
+                        "metadataStoreConnectionString": "your-metadata-store-connection-string"
+                    }
+                }
+            },
+            {
+                "name": "RunDataTransformationNotebook",
+                "type": "DatabricksNotebookActivity",
+                "linkedServiceName": {
+                    "referenceName": "DatabricksWorkspace",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "notebookPath": "/path/to/your/transformation-notebook",
+                    "baseParameters": {
+                        "metadataStoreConnectionString": "your-metadata-store-connection-string"
+                    }
+                },
+                "dependsOn": [
+                    {
+                        "activity": "RunDataIngestionNotebook",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}
