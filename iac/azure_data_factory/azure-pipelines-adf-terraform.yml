@@ -1,0 +1,56 @@
+trigger:
+  branches:
+    include:
+    - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureSubscription: 'your-azure-subscription-name-or-id'
+  resourceGroupName: 'your-resource-group-name'
+  location: 'your-resource-location'
+  dataFactoryName: 'your-data-factory-name'
+
+stages:
+- stage: DeployADF
+  displayName: 'Deploy Azure Data Factory using Terraform'
+  jobs:
+  - job: DeployADF
+    displayName: 'Deploy Azure Data Factory using Terraform'
+    steps:
+    - checkout: self
+    - task: AzureCLI@2
+      displayName: 'Install Terraform'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt-get update && sudo apt-get install terraform -y
+          terraform -v
+    - task: AzureCLI@2
+      displayName: 'Deploy ADF using Terraform'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: 'iac'
+        inlineScript: |
+          az account set --subscription $(azureSubscription)
+          terraform init
+          terraform apply -auto-approve -var="resource_group_name=$(resourceGroupName)" -var="location=$(location)" -var="data_factory_name=$(dataFactoryName)"
+    - task: AzureCLI@2
+      displayName: 'Configure ADF Git Integration'
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az extension add --name datafactory
+          az datafactory configure-factory-repo --factory-name $(dataFactoryName) \
+            --resource-group $(resourceGroupName) \
+            --location $(location) \
+            --repo-configuration '{\"type\": \"FactoryVSTSConfiguration\", \"accountName\": \"$(Build.Repository.Uri)\", \"projectName\": \"$(System.TeamProject)\", \"repositoryName\": \"$(Build.Repository.Name)\", \"collaborationBranch\": \"$(Build.SourceBranch)\", \"rootFolder\": \"/adf-pipelines\"}'
