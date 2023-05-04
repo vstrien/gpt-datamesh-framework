@@ -1888,3 +1888,47 @@ stages:
 Replace the values of `azureSubscription`, `resourceGroupName`, `location`, `sqlServerName`, and `sqlDatabaseName` with your specific information.
 
 These YAML pipelines can be added to your Azure DevOps project following the same steps as described in the previous answers. Make sure to update the `workingDirectory` value in the AzureCLI task to point to the correct folder where your Terraform files are located.
+
+KvS:
+Is now everything in place to ingest the first source, and transform it into a usable analytics model?
+
+ChatGPT:
+You have most of the components in place to ingest your first source and transform it into a usable analytics model. However, before you can begin, there are a few steps you need to complete:
+
+1. Set up your source systems and configure the necessary connections (for example, storage accounts, databases, or APIs) for data ingestion.
+
+2. Create and configure the metadata in the metadata store (Azure SQL Database) to define the source data, transformations, data quality rules, and output data. This metadata will be used by the Databricks notebooks to perform the data ingestion, transformation, data quality checks, and data output.
+
+3. Set up and configure your Azure Data Factory pipelines or Databricks orchestrator notebook, depending on your chosen orchestration approach. This includes configuring the necessary parameters and connections, as well as scheduling the pipelines/notebooks for regular execution.
+
+4. Develop and test the data ingestion, transformation, data quality, and data output notebooks in Databricks. Make sure they are working as expected and can process the data correctly based on the metadata you have defined.
+
+5. If you opted for Azure Data Factory for orchestration, create and configure the necessary ADF pipelines and activities to trigger and manage the execution of the Databricks notebooks.
+
+6. Set up the necessary monitoring and alerting mechanisms to ensure that you can quickly identify and resolve any issues that might arise during the data ingestion and transformation process.
+
+Once these steps are complete, you should be able to successfully ingest and transform your first source data into a usable analytics model.
+
+KvS:
+Now let's say I have a SQL Database that I want to ingest data from. Is it possible to define this in metadata, and then have the SQL Database ingested automatically?
+
+ChatGPT:
+Yes, it's possible to define the SQL Database as a source in your metadata and ingest data from it automatically. You'll need to extend your metadata store schema to accommodate the necessary information about the SQL Database source and the tables you want to ingest. Here's an outline of the steps you should follow:
+
+1. Update the metadata schema:
+   Extend the `source_systems` table to include additional fields for the SQL Database, such as the connection string, authentication method, and any other required information.
+   Update the `source_datasets` table to store information about the tables you want to ingest from the SQL Database, including table names and any relevant filtering conditions.
+
+2. Configure the metadata:
+   Add a new entry to the `source_systems` table for the SQL Database source, including the necessary connection information.
+   For each table you want to ingest, add an entry to the `source_datasets` table with the associated source system, table name, and filtering conditions.
+
+3. Update the Data Ingestion Notebook:
+   Modify the Data Ingestion Notebook to support SQL Database sources. You'll need to use a library like `pyodbc` or `pymssql` to connect to the SQL Database, query the tables based on the metadata, and load the data into Spark DataFrames.
+   Update the logic in the Data Ingestion Notebook to read the metadata for SQL Database sources and execute the appropriate ingestion code based on the source type.
+
+4. Test and deploy:
+   Test the updated Data Ingestion Notebook to ensure it can successfully connect to the SQL Database, read the metadata, and ingest the data into your lakehouse architecture.
+   Deploy the updated Data Ingestion Notebook to your Databricks environment, and configure the necessary orchestration components (Azure Data Factory or Databricks orchestrator notebook) to trigger the ingestion process.
+
+By following these steps, you can define the SQL Database source in your metadata and have the data ingested automatically based on the configured metadata.
