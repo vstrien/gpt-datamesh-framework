@@ -7,11 +7,10 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  azureSubscription: 'your-azure-subscription-name-or-id'
-  resourceGroupName: 'your-resource-group-name'
-  location: 'your-resource-location'
-  databricksWorkspaceName: 'your-databricks-workspace-name'
-  managedIdentityId: 'your-managed-identity-id'
+  azureSubscription: '8aa90780-bc26-461d-9db6-6df705873871'
+  resourceGroupName: 'gpt-datamesh-framework'
+  location: 'westeurope'
+  databricksWorkspaceName: 'databricksmeshwortellkvs'
 
 stages:
 - stage: DeployDatabricks
@@ -38,11 +37,11 @@ stages:
         azureSubscription: '$(azureSubscription)'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        workingDirectory: 'iac'
+        workingDirectory: 'iac/databricks'
         inlineScript: |
           az account set --subscription $(azureSubscription)
           terraform init
-          terraform apply -auto-approve -var="resource_group_name=$(resourceGroupName)" -var="location=$(location)" -var="databricks_workspace_name=$(databricksWorkspaceName)" -var="managed_identity_id=$(managedIdentityId)"
+          terraform apply -auto-approve -var="resource_group_name=$(resourceGroupName)" -var="location=$(location)" -var="databricks_workspace_name=$(databricksWorkspaceName)"
     - task: AzureCLI@2
       displayName: 'Configure Databricks Git Integration'
       inputs:
