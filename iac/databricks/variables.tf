@@ -15,15 +15,6 @@ variable "databricks_sku" {
   default     = "standard"
 }
 
-variable "managed_resource_group_name" {
-  description = "The name of the managed resource group for the Databricks workspace"
-}
-
-variable "no_public_ip" {
-  description = "Indicates if public IP addresses should be disabled for the Databricks workspace"
-  default     = true
-}
-
 variable "tags" {
   description = "A map of tags to apply to the Databricks workspace"
   default     = {}
