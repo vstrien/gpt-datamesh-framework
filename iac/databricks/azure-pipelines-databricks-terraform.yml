@@ -54,4 +54,4 @@ stages:
           databricksToken=$(az databricks workspace token create --resource-group $(resourceGroupName) --name $(databricksWorkspaceName) --lifetime-seconds 86400 --query tokenValue -o tsv)
           databricks configure --token "$databricksToken" "$(az databricks workspace show --name $(databricksWorkspaceName) --resource-group $(resourceGroupName) --query workspaceUrl -o tsv)"
           echo "Deploying Databricks notebooks from Git repository..."
-          databricks workspace import_dir "/your-git-repo-path/databricks-notebooks" "/Shared" --overwrite
+          az databricks workspace import_dir "/databricks_notebooks" "/Shared" --overwrite
