@@ -1,0 +1,26 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.8'
+    addToPath: true
+
+- script: |
+    python -m venv env
+    source env/bin/activate
+    pip install databricks-cli
+    databricks configure --token "<your-access-token>" --url "https://<your-databricks-instance>.cloud.databricks.com"
+  displayName: 'Install Databricks CLI'
+
+- script: |
+    databricks workspace import_dir --overwrite --exclude-hidden-files /Shared/Notebooks /path/to/local/notebooks
+  displayName: 'Import Notebooks to Databricks Workspace'
+
+- script: |
+    databricks workspace export_dir --overwrite /Shared/Notebooks /path/to/local/notebooks
+  displayName: 'Export Notebooks from Databricks Workspace'
